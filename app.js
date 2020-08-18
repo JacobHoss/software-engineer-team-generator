@@ -10,9 +10,118 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+const employees = [];
 
+function init() {
+    function addTeamMember() {
+        inquirer.prompt([
+            {
+                type: "list",
+                message: "Which team member would you like to add?",
+                name: "teamMember",
+                choices: ["Manager", "Engineer", "Intern", "I don't want anymore team members"]
+            }
+        ]).then(response => {
+            if (response.teamMember === "Manager") {
+                return getManager();
+            } else if (response.teamMember === "Engineer") {
+                return getEngineer();
+            } else if (response.teamMember === "Intern") {
+                return getIntern();
+            } else {
+                return fs.writeFileSync(outputPath, render(employees), "utf-8");
+            }
+        })
+    }
+    addTeamMember();
+    function getManager() {
+        inquirer.prompt([
+            {
+                type: "input",
+                message: "What is the Manager's Name?",
+                name: "name"
+            },
+            {
+                type: "input",
+                message: "What is the Manager's ID?",
+                name: "id"
+            },
+            {
+                type: "input",
+                message: "What is the Manager's email?",
+                name: "email"
+            },
+            {
+                type: "input",
+                message: "What is the Manager's Office Number?",
+                name: "officeNumber"
+            }
+        ]).then(response => {
+            const manager = new Manager(response.name, response.id, response.email, response.officeNumber);
+            employees.push(manager);
+            addTeamMember();
+        })
+    }
+    function getEngineer() {
+        inquirer.prompt([
+            {
+                type: "input",
+                message: "What is the Engineer's Name?",
+                name: "name"
+            },
+            {
+                type: "input",
+                message: "What is the Engineer's ID?",
+                name: "id"
+            },
+            {
+                type: "input",
+                message: "What is the Engineer's email?",
+                name: "email"
+            },
+            {
+                type: "input",
+                message: "What is the Engineer's Github?",
+                name: "github"
+            }
+        ]).then(response => {
+            const engineer = new Engineer(response.name, response.id, response.email, response.github);
+            employees.push(engineer);
+            addTeamMember();
+        });
+    }
+    function getIntern() {
+        inquirer.prompt([
+            {
+                type: "input",
+                message: "What is the Intern's Name?",
+                name: "name"
+            },
+            {
+                type: "input",
+                message: "What is the Intern's ID?",
+                name: "id"
+            },
+            {
+                type: "input",
+                message: "What is the Intern's email?",
+                name: "email"
+            },
+            {
+                type: "input",
+                message: "What is the Interns's school?",
+                name: "school"
+            }
+        ]).then(response => {
+            const intern = new Intern(response.name, response.id, response.email, response.school);
+            employees.push(intern);
+            addTeamMember();
+        });
+    }
+}
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
+
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
@@ -33,3 +142,4 @@ const render = require("./lib/htmlRenderer");
 // for further information. Be sure to test out each class and verify it generates an
 // object with the correct structure and methods. This structure will be crucial in order
 // for the provided `render` function to work! ```
+init()
